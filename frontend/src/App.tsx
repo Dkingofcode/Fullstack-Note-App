@@ -4,15 +4,19 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Note as NoteModel } from "./models/note";
 import Note from "./components/Notes";
 import styles from "./styles/NotesPage.module.css";
+import * as NotesApi from "./network/notes_api";
+import AddNoteDialog from './components/AddNoteDialog';
+
 
 function App() {
    const [notes, setNotes] = useState<NoteModel[]>([]);
+   const [showAddNotDialog, setShowAddNotDialog] = useState(false);
+
 
    useEffect(() => {
     async function loadNotes(){
     try{
-      const response = await fetch("/api/notes", { method: "GET" });
-      const notes = await response.json();
+       const notes = await NotesApi.fetchNotes();
       setNotes(notes);
     } catch(error){
       console.error(error);
@@ -31,6 +35,9 @@ function App() {
         </Col>
         ))}
         </Row>
+        {showAddNotDialog && 
+          <AddNoteDialog />
+        }
     </Container>
   );
 }

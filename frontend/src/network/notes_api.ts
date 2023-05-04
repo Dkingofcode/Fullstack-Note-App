@@ -1,0 +1,54 @@
+import { Note }  from "../models/note";
+
+async function fetchData(input: RequestInfo, init?: RequestInit) {
+    const response = await fetch(input, init);
+   if(response.ok){
+     return response;
+   } else{
+      const errBody = await response.json();
+      const errorMessage = errBody.error;
+      throw Error(errorMessage);
+    }
+}
+
+export async function fetchNotes(): Promise<Note[]> {
+    const response = await fetchData("/api/notes", { method: "GET" });
+    return response.json();
+}
+
+export interface NoteInput{
+    title: string,
+    text?: string,
+}
+
+export async function createNote(note: NoteInput): Promise<Note> { 
+   const response = await fetchData("/api/notes",
+   {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+   }); 
+   return response.json();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
