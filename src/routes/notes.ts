@@ -6,6 +6,9 @@ const router = express.Router();
 
 router.get("/", RoutesController.getNotes);
 
+router.push("/", RoutesController.createNote)
+
+
 export default router;
 
 
