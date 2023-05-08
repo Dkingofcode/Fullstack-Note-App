@@ -8,6 +8,7 @@ import styles from "./styles/NotesPage.module.css";
 import * as NotesApi from "./network/notes_api";
 import AddNoteDialog from './components/AddNoteDialog';
 import { FaPlus } from "react-icons/fa";
+import { Spinner } from "bootstrap";
 
 function App() {
    const [notes, setNotes] = useState<NoteModel[]>([]);
@@ -26,7 +27,10 @@ function App() {
       setNotes(notes);
     } catch(error){
       console.error(error);
-      alert(error);
+      //alert(error);
+      setShowNotesLoadingError(true);
+    } finally{
+      setNotesLoading(false);
     }
   }
   loadNotes();
@@ -42,18 +46,30 @@ function App() {
     }
    }
 
+   const NoteGrid =  
+    <Row xs={1} md={2} xl={3} className={`g-4` ${styles.}}>
+    {notes.map(note => (
+      <Col key={note._id}>
+      <Note note={note} className={styles.note} onDeleteNoteClicked={deleteNote} onNoteClicked={setNoteToEdit} />
+      </Col>
+      ))}
+      </Row>
+   
+
   return (
     <Container>
       <Button onClick={() => setShowAddNoteDialog(true)}>
         Add new note
       </Button>
-      <Row xs={1} md={2} xl={3} className='g-4'>
-      {notes.map(note => (
-        <Col key={note._id}>
-        <Note note={note} className={styles.note} onDeleteNoteClicked={deleteNote} onNoteClicked={setNoteToEdit} />
-        </Col>
-        ))}
-        </Row>
+       {notesLoading && <Spinner animation="border" variant="primary" />}
+        {showNotesLoadingError && <p>Something went wrong. Please refresh the page.</p>}
+        {!notesLoading && !showNotesLoadingError && 
+        <>
+        { 
+          notes.length > 0 ? NoteGrid : <p>You don't have any notes yet</p>
+        }
+        </> 
+        } 
         {showAddNoteDialog && 
           <AddNoteDialog onDismiss={() => setShowAddNoteDialog(false)} 
             onNoteSaved={(newNote) => {
